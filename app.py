@@ -85,11 +85,11 @@ if st.button("Visualize Stacking"):
 
 # --- New Section: Pallet Packing in a Shipping Container ---
 st.divider()
-st.title("Shipping Container Pallet Fitting Visualizer")
+st.title("Container Pallet Fitting Visualizer")
 
 container_w = st.number_input("Container Width", min_value=1, value=100, key="cont_w")
 container_l = st.number_input("Container Length", min_value=1, value=200, key="cont_l")
-
+st.text("How many different pallet sizes are going into the container")
 pallet_count = st.number_input("Number of Pallet Types", min_value=1, max_value=5, value=1)
 
 pallets = []

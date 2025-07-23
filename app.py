@@ -112,49 +112,55 @@ def visualize_pallet_packing(container_w, container_l, pallets):
     color_map = ['lightgreen', 'lightcoral', 'lightyellow', 'lightblue', 'violet']
     legend_handles = []
 
-    y_cursor = 0  # Y-offset to separate pallet zones if needed
+    # Track occupied slots in the container
+    slot_map = [[None for _ in range(container_w)] for _ in range(container_l)]
+
+    def is_area_free(x, y, w, h):
+        """Check if area from (x, y) of size (w, h) is free"""
+        if x + w > container_w or y + h > container_l:
+            return False
+        for i in range(y, y + h):
+            for j in range(x, x + w):
+                if slot_map[i][j] is not None:
+                    return False
+        return True
+
+    def occupy_area(x, y, w, h, idx):
+        """Mark area from (x, y) of size (w, h) as occupied by pallet idx"""
+        for i in range(y, y + h):
+            for j in range(x, x + w):
+                slot_map[i][j] = idx
 
     for idx, (pw, pl, qty) in enumerate(pallets):
-        best_fit = None
-        max_fit = 0
+        best_orientation = None
+        best_fit = 0
         for (tw, tl) in [(pw, pl), (pl, pw)]:
-            cols = container_w // tw
-            rows = container_l // tl
-            possible_slots = cols * rows
-            if possible_slots >= qty and possible_slots > max_fit:
-                best_fit = (tw, tl)
-                max_fit = possible_slots
-            elif possible_slots > max_fit:
-                best_fit = (tw, tl)
-                max_fit = possible_slots
+            fit_x = container_w // tw
+            fit_y = container_l // tl
+            total_slots = fit_x * fit_y
+            if total_slots > best_fit:
+                best_fit = total_slots
+                best_orientation = (tw, tl)
 
-        if best_fit is None:
+        if best_orientation is None:
             continue
 
-        tw, tl = best_fit
-        cols = container_w // tw
-        rows = container_l // tl
+        tw, tl = best_orientation
+        stacks_placed = 0
 
-        full_stacks = qty // (cols * rows)
-        remaining = qty % (cols * rows)
-
-        placed = 0
-        for row in range(rows):
-            for col in range(cols):
-                x = col * tw
-                y = row * tl
-                stack = full_stacks + (1 if remaining > 0 else 0)
-                if stack > 0:
+        for y in range(0, container_l, tl):
+            for x in range(0, container_w, tw):
+                if stacks_placed >= qty:
+                    break
+                if is_area_free(x, y, tw, tl):
+                    occupy_area(x, y, tw, tl, idx)
                     rect = patches.Rectangle((x, y), tw, tl,
                                              edgecolor='black', facecolor=color_map[idx % len(color_map)])
                     ax.add_patch(rect)
-                    ax.text(x + tw / 2, y + tl / 2, f"{stack}", color='black',
+                    ax.text(x + tw / 2, y + tl / 2, f"1", color='black',
                             ha='center', va='center', fontsize=10, weight='bold')
-                    placed += stack
-                    remaining -= 1 if remaining > 0 else 0
-                if placed >= qty:
-                    break
-            if placed >= qty:
+                    stacks_placed += 1
+            if stacks_placed >= qty:
                 break
 
         legend_patch = patches.Patch(color=color_map[idx % len(color_map)],

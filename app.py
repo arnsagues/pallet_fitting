@@ -29,7 +29,6 @@ st.caption("_Created by Arnau Sagues - July 2025_")
 
 st.warning("As of 7/23/2025, This page may be updated at random times during the day. If you exprience an error or the page updates randomly, reload the website.")
 st.write("Last update: 07/23/2025")
-st.divider()
 
 #"""
 #Sec. 2: Visulazing pallets and rolls 

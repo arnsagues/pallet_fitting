@@ -63,11 +63,12 @@ st.divider()
 st.markdown("Enter the dimensions of the pallet and roll. Include any buffer in the desried values")
 st.markdown("*All units should be in inches*")
 
-pallet_width = st.number_input("Pallet Width", min_value=1, value=20)
-pallet_length = st.number_input("Pallet Length", min_value=1, value=10)
-endplate_width = st.number_input("Endplate Width (roll base)", min_value=1, value=4)
-roll_length = st.number_input("Roll Length", min_value=1, value=10)
-rolls_per_pallet = st.number_input("Rolls per Pallet", min_value=1, value=12)
+pallet_width = st.number_input("Pallet Width", min_value=1, value=1)
+pallet_length = st.number_input("Pallet Length", min_value=1, value=1)
+st.badge("New")
+endplate_width = st.number_input("Endplate Width (roll base)", min_value=1, value=1)
+roll_length = st.number_input("Roll Length", min_value=1, value=1)
+rolls_per_pallet = st.number_input("Rolls per Pallet", min_value=1, value=1)
 
 if st.button("Visualize Stacking"):
     fig = visualize_stacked_packing(

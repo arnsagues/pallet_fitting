@@ -101,6 +101,8 @@ for i in range(pallet_count):
     pallets.append((pw, pl, qty))
 
 def visualize_pallet_packing(container_w, container_l, pallets):
+    import math
+
     fig, ax = plt.subplots()
     ax.set_xlim(0, container_w)
     ax.set_ylim(0, container_l)
@@ -112,56 +114,58 @@ def visualize_pallet_packing(container_w, container_l, pallets):
     color_map = ['lightgreen', 'lightcoral', 'lightyellow', 'lightblue', 'violet']
     legend_handles = []
 
-    # Track occupied slots in the container
-    slot_map = [[None for _ in range(container_w)] for _ in range(container_l)]
+    # Track occupied area: initialize with False
+    occupied_map = [[None for _ in range(container_w)] for _ in range(container_l)]
 
     def is_area_free(x, y, w, h):
-        """Check if area from (x, y) of size (w, h) is free"""
         if x + w > container_w or y + h > container_l:
             return False
         for i in range(y, y + h):
             for j in range(x, x + w):
-                if slot_map[i][j] is not None:
+                if occupied_map[i][j] is not None:
                     return False
         return True
 
     def occupy_area(x, y, w, h, idx):
-        """Mark area from (x, y) of size (w, h) as occupied by pallet idx"""
         for i in range(y, y + h):
             for j in range(x, x + w):
-                slot_map[i][j] = idx
+                occupied_map[i][j] = idx
 
     for idx, (pw, pl, qty) in enumerate(pallets):
         best_orientation = None
         best_fit = 0
-        for (tw, tl) in [(pw, pl), (pl, pw)]:
-            fit_x = container_w // tw
-            fit_y = container_l // tl
-            total_slots = fit_x * fit_y
-            if total_slots > best_fit:
-                best_fit = total_slots
-                best_orientation = (tw, tl)
+        best_positions = []
 
-        if best_orientation is None:
+        # Try both orientations
+        for (tw, tl) in [(pw, pl), (pl, pw)]:
+            positions = []
+            for y in range(0, container_l - tl + 1, tl):
+                for x in range(0, container_w - tw + 1, tw):
+                    if is_area_free(x, y, tw, tl):
+                        positions.append((x, y, tw, tl))
+            if len(positions) > best_fit:
+                best_fit = len(positions)
+                best_orientation = (tw, tl)
+                best_positions = positions
+
+        if not best_positions:
             continue
 
-        tw, tl = best_orientation
-        stacks_placed = 0
+        stacks_per_slot = qty // len(best_positions)
+        extra_stacks = qty % len(best_positions)
 
-        for y in range(0, container_l, tl):
-            for x in range(0, container_w, tw):
-                if stacks_placed >= qty:
-                    break
-                if is_area_free(x, y, tw, tl):
-                    occupy_area(x, y, tw, tl, idx)
-                    rect = patches.Rectangle((x, y), tw, tl,
-                                             edgecolor='black', facecolor=color_map[idx % len(color_map)])
-                    ax.add_patch(rect)
-                    ax.text(x + tw / 2, y + tl / 2, f"1", color='black',
-                            ha='center', va='center', fontsize=10, weight='bold')
-                    stacks_placed += 1
-            if stacks_placed >= qty:
-                break
+        for i, (x, y, tw, tl) in enumerate(best_positions):
+            if i * stacks_per_slot + min(i, extra_stacks) >= qty:
+                break  # stop once we've placed all pallets
+
+            occupy_area(x, y, tw, tl, idx)
+
+            count = stacks_per_slot + (1 if i < extra_stacks else 0)
+            rect = patches.Rectangle((x, y), tw, tl,
+                                     edgecolor='black', facecolor=color_map[idx % len(color_map)])
+            ax.add_patch(rect)
+            ax.text(x + tw / 2, y + tl / 2, str(count), color='black',
+                    ha='center', va='center', fontsize=10, weight='bold')
 
         legend_patch = patches.Patch(color=color_map[idx % len(color_map)],
                                      label=f"Pallet {idx+1} ({pw}x{pl})")

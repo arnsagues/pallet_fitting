@@ -24,7 +24,7 @@ st.set_page_config(
     page_icon="🚛"
 )
 
-st.title("Pallet Roll Stacking Visualizer")
+st.title("Packing Visualizer")
 st.caption("_Created by Arnau Sagues - July 2025_")
 
 st.warning("As of 7/23/2025, This page may be updated at random times during the day. If you exprience an error or the page updates randomly, reload the website.")
@@ -34,6 +34,7 @@ st.divider()
 #"""
 #Sec. 2: Visulazing pallets and rolls 
 #"""
+st.header("Pallet Roll Stacking Visualizer", divider = "grey")
 def visualize_stacked_packing(container_w, container_h, rect_w, rect_h, rect_count):
     orientations = [(rect_w, rect_h), (rect_h, rect_w)]
 
@@ -108,8 +109,7 @@ if st.button("Visualize Stacking"):
 #"""
 ##Sec. 3: Pallet packing into a container
 #"""
-st.divider()
-st.title("Container Pallet Fitting Visualizer")
+st.header("Container Pallet Fitting Visualizer", divider = "grey")
 
 # User input #
 container_w = st.number_input("Container Width", min_value=1, value=100, key="cont_w")

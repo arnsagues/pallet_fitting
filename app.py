@@ -75,6 +75,8 @@ def visualize_stacked_packing(container_w, container_h, rect_w, rect_h, rect_cou
                 break
 
         plt.title(f"{rect_count} rolls of size {rw}x{rh} stacked in pallet {container_w}x{container_h}")
+        plt.xlabel(f"{container_w} in. width")
+        plt.ylabel(f"container_h} in. length")
         plt.gca().invert_yaxis()
         return fig
 
@@ -197,6 +199,7 @@ def visualize_pallet_packing(container_w, container_l, pallets):
         legend_handles.append(legend_patch)
 
     plt.title("Pallet Stack Counts in Container")
+    plt.ylabel("------------>")
     plt.gca().invert_yaxis()
     ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1.0, 0.5))
     return fig

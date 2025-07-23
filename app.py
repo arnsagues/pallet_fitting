@@ -1,8 +1,8 @@
-""""
+"""
 Name: Shipping and Receiving Visualizer 
 Author: Arnau Sagues 
 Date: 07/23/2025
-""""
+"""
 
 
 """
@@ -10,9 +10,9 @@ Test
 """
 
 
-""""
+"""
 Sec. 1: Import libraries 
-""""
+"""
 
 
 import streamlit as st
@@ -20,9 +20,9 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import math 
 
-""""
+"""
 Page UI: Title
-""""
+"""
 # Page config
 st.set_page_config(
     page_title="Pallet Fitting",
@@ -34,7 +34,7 @@ st.caption("_Created by Arnau Sagues - July 2025_")
 
 st.divider()
 
-""""
+"""
 Sec. 2: Visulazing pallets and rolls 
 """
 def visualize_stacked_packing(container_w, container_h, rect_w, rect_h, rect_count):
@@ -108,7 +108,7 @@ if st.button("Visualize Stacking"):
     else:
         st.error("Rectangles do not fit in any orientation.")
 
-""""
+"""
 Sec. 3: Pallet packing into a container
 """
 st.divider()

@@ -3,6 +3,11 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
+st.set_page_config(
+    page_title="Pallet Fitting",
+    page_icon="🚛"
+)
+
 def visualize_stacked_packing(container_w, container_h, rect_w, rect_h, rect_count):
     orientations = [(rect_w, rect_h), (rect_h, rect_w)]
 

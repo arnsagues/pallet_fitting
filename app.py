@@ -173,7 +173,7 @@ def visualize_pallet_packing(container_w, container_l, pallets):
 
     plt.title("Pallet Stack Counts in Container")
     plt.gca().invert_yaxis()
-    ax.legend(handles=legend_handles, loc='upper right')
+    ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1.0, 0.5))
     return fig
 
 if st.button("Visualize Pallet Fit in Container"):

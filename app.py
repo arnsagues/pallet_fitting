@@ -56,7 +56,7 @@ def visualize_stacked_packing(container_w, container_h, rect_w, rect_h, rect_cou
 
 # Streamlit UI
 st.title("Pallet Roll Stacking Visualizer")
-st.markdown("*Created by Arnau Sagues - July 2025*")
+st.caption("_Created by Arnau Sagues - July 2025_")
 
 st.divider()
 
@@ -65,8 +65,8 @@ st.markdown("*All units should be in inches*")
 
 pallet_width = st.number_input("Pallet Width", min_value=1, value=1)
 pallet_length = st.number_input("Pallet Length", min_value=1, value=1)
-st.badge("New")
 endplate_width = st.number_input("Endplate Width (roll base)", min_value=1, value=1)
+st.caption("This should be the side of the endplate that will be in contact with the pallet")
 roll_length = st.number_input("Roll Length", min_value=1, value=1)
 rolls_per_pallet = st.number_input("Rolls per Pallet", min_value=1, value=1)
 

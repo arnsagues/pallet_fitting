@@ -1,13 +1,34 @@
-# save as app.py
+""""
+Name: Shipping and Receiving Visualizer 
+Author: Arnau Sagues 
+Date: 07/23/2025
+"""
+
+"""
+Sec. 1: Import libraries 
+"""
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+import math 
 
+"""
+Page UI: Title
+"""
+# Page config
 st.set_page_config(
     page_title="Pallet Fitting",
     page_icon="🚛"
 )
 
+st.title("Pallet Roll Stacking Visualizer")
+st.caption("_Created by Arnau Sagues - July 2025_")
+
+st.divider()
+
+"""
+Sec. 2: Visulazing pallets and rolls 
+"""
 def visualize_stacked_packing(container_w, container_h, rect_w, rect_h, rect_count):
     orientations = [(rect_w, rect_h), (rect_h, rect_w)]
 
@@ -54,12 +75,7 @@ def visualize_stacked_packing(container_w, container_h, rect_w, rect_h, rect_cou
 
     return None
 
-# Streamlit UI
-st.title("Pallet Roll Stacking Visualizer")
-st.caption("_Created by Arnau Sagues - July 2025_")
-
-st.divider()
-
+# User input #
 st.markdown("Enter the dimensions of the pallet and roll. Include any buffer in the desried values")
 st.markdown("*All units should be in inches*")
 
@@ -70,6 +86,7 @@ st.caption("This should be the side of the endplate that will be in contact with
 roll_length = st.number_input("Roll Length", min_value=1, value=1)
 rolls_per_pallet = st.number_input("Rolls per Pallet", min_value=1, value=1)
 
+# Run the script #
 if st.button("Visualize Stacking"):
     fig = visualize_stacked_packing(
         container_w=pallet_width,
@@ -83,16 +100,20 @@ if st.button("Visualize Stacking"):
     else:
         st.error("Rectangles do not fit in any orientation.")
 
-# --- New Section: Pallet Packing in a Shipping Container ---
+"""
+Sec. 3: Pallet packing into a container
+"""
 st.divider()
 st.title("Container Pallet Fitting Visualizer")
 
+# User input #
 container_w = st.number_input("Container Width", min_value=1, value=100, key="cont_w")
 container_l = st.number_input("Container Length", min_value=1, value=200, key="cont_l")
 
 pallet_count = st.number_input("Number of Pallet Types", min_value=1, max_value=5, value=1)
 
 pallets = []
+
 for i in range(pallet_count):
     st.subheader(f"Pallet Type {i+1}")
     pw = st.number_input(f"Pallet {i+1} Width", min_value=1, value=40, key=f"pw_{i}")
@@ -111,7 +132,7 @@ def visualize_pallet_packing(container_w, container_l, pallets):
     ax.add_patch(patches.Rectangle((0, 0), container_w, container_l,
                                    edgecolor='black', facecolor='none', linewidth=2))
 
-    color_map = ['lightgreen', 'lightcoral', 'lightyellow', 'lightblue', 'violet']
+    color_map = ['lightgreen', 'lightred', 'lightblue', 'lightyellow', 'violet']
     legend_handles = []
 
     # Track occupied area: initialize with False
@@ -176,6 +197,7 @@ def visualize_pallet_packing(container_w, container_l, pallets):
     ax.legend(handles=legend_handles, loc='center left', bbox_to_anchor=(1.0, 0.5))
     return fig
 
+# Run the function #
 if st.button("Visualize Pallet Fit in Container"):
     fig = visualize_pallet_packing(container_w, container_l, pallets)
     if fig:

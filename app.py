@@ -82,3 +82,78 @@ if st.button("Visualize Stacking"):
         st.pyplot(fig)
     else:
         st.error("Rectangles do not fit in any orientation.")
+
+# --- New Section: Pallet Packing in a Shipping Container ---
+st.divider()
+st.title("Shipping Container Pallet Fitting Visualizer")
+
+container_w = st.number_input("Container Width", min_value=1, value=100, key="cont_w")
+container_l = st.number_input("Container Length", min_value=1, value=200, key="cont_l")
+
+pallet_count = st.number_input("Number of Pallet Types", min_value=1, max_value=5, value=1)
+
+pallets = []
+for i in range(pallet_count):
+    st.subheader(f"Pallet Type {i+1}")
+    pw = st.number_input(f"Pallet {i+1} Width", min_value=1, value=40, key=f"pw_{i}")
+    pl = st.number_input(f"Pallet {i+1} Length", min_value=1, value=48, key=f"pl_{i}")
+    qty = st.number_input(f"Pallet {i+1} Quantity", min_value=1, value=10, key=f"qty_{i}")
+    pallets.append((pw, pl, qty))
+
+def visualize_pallet_packing(container_w, container_l, pallets):
+    fig, ax = plt.subplots()
+    ax.set_xlim(0, container_w)
+    ax.set_ylim(0, container_l)
+    ax.set_aspect('equal')
+    ax.grid()
+    ax.add_patch(patches.Rectangle((0, 0), container_w, container_l,
+                                   edgecolor='black', facecolor='none', linewidth=2))
+
+    x_offset, y_offset = 0, 0
+    color_map = ['lightgreen', 'lightcoral', 'lightyellow', 'lightblue', 'violet']
+    
+    for idx, (pw, pl, qty) in enumerate(pallets):
+        best_fit = None
+        for (tw, tl) in [(pw, pl), (pl, pw)]:
+            cols = container_w // tw
+            rows = container_l // tl
+            max_fit = cols * rows
+            if max_fit >= qty:
+                best_fit = (tw, tl)
+                break
+            elif best_fit is None or max_fit > (container_w // best_fit[0]) * (container_l // best_fit[1]):
+                best_fit = (tw, tl)
+        
+        if best_fit is None:
+            continue
+
+        tw, tl = best_fit
+        cols = container_w // tw
+        rows = container_l // tl
+        placed = 0
+
+        for row in range(rows):
+            for col in range(cols):
+                if placed >= qty:
+                    break
+                x = col * tw
+                y = row * tl
+                rect = patches.Rectangle((x, y), tw, tl, edgecolor='black', facecolor=color_map[idx % len(color_map)])
+                ax.add_patch(rect)
+                ax.text(x + tw / 2, y + tl / 2, f"P{idx+1}", color='black',
+                        ha='center', va='center', fontsize=10, weight='bold')
+                placed += 1
+            if placed >= qty:
+                break
+
+    plt.title("Pallet Layout in Container")
+    plt.gca().invert_yaxis()
+    return fig
+
+if st.button("Visualize Pallet Fit in Container"):
+    fig = visualize_pallet_packing(container_w, container_l, pallets)
+    if fig:
+        st.pyplot(fig)
+    else:
+        st.error("Unable to fit pallets in the container.")
+

@@ -89,7 +89,7 @@ st.title("Container Pallet Fitting Visualizer")
 
 container_w = st.number_input("Container Width", min_value=1, value=100, key="cont_w")
 container_l = st.number_input("Container Length", min_value=1, value=200, key="cont_l")
-st.text("How many different pallet sizes are going into the container")
+
 pallet_count = st.number_input("Number of Pallet Types", min_value=1, max_value=5, value=1)
 
 pallets = []
@@ -109,45 +109,61 @@ def visualize_pallet_packing(container_w, container_l, pallets):
     ax.add_patch(patches.Rectangle((0, 0), container_w, container_l,
                                    edgecolor='black', facecolor='none', linewidth=2))
 
-    x_offset, y_offset = 0, 0
     color_map = ['lightgreen', 'lightcoral', 'lightyellow', 'lightblue', 'violet']
-    
+    legend_handles = []
+
+    y_cursor = 0  # Y-offset to separate pallet zones if needed
+
     for idx, (pw, pl, qty) in enumerate(pallets):
         best_fit = None
+        max_fit = 0
         for (tw, tl) in [(pw, pl), (pl, pw)]:
             cols = container_w // tw
             rows = container_l // tl
-            max_fit = cols * rows
-            if max_fit >= qty:
+            possible_slots = cols * rows
+            if possible_slots >= qty and possible_slots > max_fit:
                 best_fit = (tw, tl)
-                break
-            elif best_fit is None or max_fit > (container_w // best_fit[0]) * (container_l // best_fit[1]):
+                max_fit = possible_slots
+            elif possible_slots > max_fit:
                 best_fit = (tw, tl)
-        
+                max_fit = possible_slots
+
         if best_fit is None:
             continue
 
         tw, tl = best_fit
         cols = container_w // tw
         rows = container_l // tl
-        placed = 0
 
+        full_stacks = qty // (cols * rows)
+        remaining = qty % (cols * rows)
+
+        placed = 0
         for row in range(rows):
             for col in range(cols):
-                if placed >= qty:
-                    break
                 x = col * tw
                 y = row * tl
-                rect = patches.Rectangle((x, y), tw, tl, edgecolor='black', facecolor=color_map[idx % len(color_map)])
-                ax.add_patch(rect)
-                ax.text(x + tw / 2, y + tl / 2, f"P{idx+1}", color='black',
-                        ha='center', va='center', fontsize=10, weight='bold')
-                placed += 1
+                stack = full_stacks + (1 if remaining > 0 else 0)
+                if stack > 0:
+                    rect = patches.Rectangle((x, y), tw, tl,
+                                             edgecolor='black', facecolor=color_map[idx % len(color_map)])
+                    ax.add_patch(rect)
+                    ax.text(x + tw / 2, y + tl / 2, f"{stack}", color='black',
+                            ha='center', va='center', fontsize=10, weight='bold')
+                    placed += stack
+                    remaining -= 1 if remaining > 0 else 0
+                if placed >= qty:
+                    break
             if placed >= qty:
                 break
 
-    plt.title("Pallet Layout in Container")
+        legend_patch = patches.Patch(color=color_map[idx % len(color_map)],
+                                     label=f"Pallet {idx+1} ({pw}x{pl})")
+        legend_handles.append(legend_patch)
+
+    plt.title("Pallet Stack Counts in Container")
     plt.gca().invert_yaxis()
+    ax.legend(handles=legend_handles, loc='upper right')
     return fig
 
 if st.button("Visualize Pallet Fit in Container"):
@@ -156,4 +172,3 @@ if st.button("Visualize Pallet Fit in Container"):
         st.pyplot(fig)
     else:
         st.error("Unable to fit pallets in the container.")
-

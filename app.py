@@ -136,7 +136,7 @@ def visualize_pallet_packing(container_w, container_l, pallets):
     ax.add_patch(patches.Rectangle((0, 0), container_w, container_l,
                                    edgecolor='black', facecolor='none', linewidth=2))
 
-    color_map = ['lightgreen', 'lightred', 'lightblue', 'lightyellow', 'violet']
+    color_map = ['lightgreen', 'lightcoral', 'lightblue', 'lightyellow', 'violet']
     legend_handles = []
 
     # Track occupied area: initialize with False

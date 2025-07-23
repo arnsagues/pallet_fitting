@@ -76,7 +76,7 @@ def visualize_stacked_packing(container_w, container_h, rect_w, rect_h, rect_cou
 
         plt.title(f"{rect_count} rolls of size {rw}x{rh} stacked in pallet {container_w}x{container_h}")
         plt.xlabel(f"{container_w} in. width")
-        plt.ylabel(f"container_h} in. length")
+        plt.ylabel(f"{container_h} in. length")
         plt.gca().invert_yaxis()
         return fig
 

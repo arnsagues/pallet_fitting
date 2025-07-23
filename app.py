@@ -2,11 +2,11 @@
 Name: Shipping and Receiving Visualizer 
 Author: Arnau Sagues 
 Date: 07/23/2025
-"""
+""""
 
 """"
 Sec. 1: Import libraries 
-"""
+""""
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -14,7 +14,7 @@ import math
 
 """"
 Page UI: Title
-"""
+""""
 # Page config
 st.set_page_config(
     page_title="Pallet Fitting",

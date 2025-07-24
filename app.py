@@ -112,6 +112,9 @@ if st.button("Visualize Stacking"):
 #"""
 st.header("Container Pallet Fitting Visualizer", divider = "grey")
 
+st.markdown("Enter the dimensions of the pallet and container (truck ot shipping container). Include any buffer in the desried values")
+st.markdown("*All units should be in inches*")
+
 # User input #
 container_w = st.number_input("Container Width", min_value=1, value=100, key="cont_w")
 container_l = st.number_input("Container Length", min_value=1, value=200, key="cont_l")

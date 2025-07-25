@@ -129,8 +129,8 @@ for i in range(pallet_count):
     st.subheader(f"Pallet Type {i+1}")
     pw = st.number_input(f"Pallet {i+1} Width", min_value=1, value=40, key=f"pw_{i}")
     pl = st.number_input(f"Pallet {i+1} Length", min_value=1, value=48, key=f"pl_{i}")
-    st.badge("1-stack-high Max", color = "orange")
     qty = st.number_input(f"Pallet {i+1} Quantity", min_value=1, value=10, key=f"qty_{i}")
+    st.badge("1-stack-high Max", color = "orange")
     pallets.append((pw, pl, qty))
 
 def visualize_pallet_packing(container_w, container_l, pallets):
